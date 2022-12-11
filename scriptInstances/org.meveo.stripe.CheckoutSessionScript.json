@@ -8,6 +8,11 @@
   "transactionType" : "SAME",
   "executionRoles" : [ ],
   "sourcingRoles" : [ ],
-  "mavenDependencies" : [ ],
+  "mavenDependencies" : [ {
+    "groupId" : "com.stripe",
+    "artifactId" : "stripe-java",
+    "version" : "22.3.0",
+    "coordinates" : "com.stripe:stripe-java:22.3.0"
+  } ],
   "importScriptInstances" : [ ]
 }
