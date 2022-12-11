@@ -1,0 +1,9 @@
+{
+  "code" : "mv-stripe",
+  "description" : "stripe checkout",
+  "license" : "GPL",
+  "currentVersion" : "0.1",
+  "isInDraft" : true,
+  "moduleDependencies" : [ ],
+  "moduleFiles" : [ ]
+}
