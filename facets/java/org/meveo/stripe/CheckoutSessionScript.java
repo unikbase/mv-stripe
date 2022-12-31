@@ -11,6 +11,9 @@ import org.meveo.model.storage.Repository;
 import org.meveo.service.storage.RepositoryService;
 import org.meveo.api.persistence.CrossStorageApi;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 //import org.meveo.service.admin.impl.credentials.CredentialHelperService;
 //import org.meveo.model.admin.MvCredential;
 
@@ -60,7 +63,15 @@ public class CheckoutSessionScript extends EndpointScript {
 		if (parameters.containsKey("token")) {
 			inputInfo.put("token", parameters.get("token").toString());
 		}
-		checkoutInfo.setInputInfo(inputInfo);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = null;
+        try {
+            json = objectMapper.writeValueAsString(inputInfo);
+            System.out.println(json);
+        } catch (JsonProcessingException e) {
+			throw new BusinessException(e);
+        }
+		checkoutInfo.setInputInfo(json);
 
 		Repository defaultRepo = repositoryService.findDefaultRepository();
 		try {
