@@ -35,6 +35,17 @@
             "id": "CE_StrCheckoutInfo_creationDate",
             "title": "StrCheckoutInfo.creationDate",
             "type": "string"
+        },
+        "responseCode": {
+            "storages": ["SQL"],
+            "nullable": true,
+            "description": "Response code",
+            "readOnly": false,
+            "versionable": false,
+            "id": "CE_StrCheckoutInfo_responseCode",
+            "title": "StrCheckoutInfo.responseCode",
+            "type": "string",
+            "maxLength": 255
         }
     }
 }
