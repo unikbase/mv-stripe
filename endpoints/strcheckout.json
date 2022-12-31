@@ -1,0 +1,19 @@
+{
+  "code" : "strcheckout",
+  "description" : "create stripe ceckout session",
+  "secured" : false,
+  "checkPathParams" : false,
+  "serviceCode" : "org.meveo.stripe.CheckoutSessionScript",
+  "synchronous" : true,
+  "method" : "POST",
+  "parameterMappings" : [ ],
+  "pathParameters" : [ ],
+  "roles" : [ ],
+  "serializeResult" : false,
+  "contentType" : "application/json",
+  "basePath" : "strcheckout",
+  "path" : "/",
+  "pool" : {
+    "usePool" : false
+  }
+}
