@@ -39,6 +39,12 @@ public class CheckoutSessionScript extends EndpointScript {
 
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
 
+	private String responseUrl;
+
+	public String getResponseUrl(){
+		return responseUrl;
+	}
+
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		Log.info("received {}", parameters);
@@ -107,7 +113,7 @@ public class CheckoutSessionScript extends EndpointScript {
             .build();
       Session session = Session.create(params);
 	  Log.info("session {}", session);
-	  endpointResponse.setOutput((""+session.getUrl()).getBytes());
+	  responseUrl=session.getUrl();
 	}
 
 }
