@@ -1,0 +1,36 @@
+{
+	"info": {
+		"_postman_id": "65b59241-4310-47f5-8c8e-4a1690957992",
+		"name": "Onboarding",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3389070"
+	},
+	"item": [
+		{
+			"name": "Create Checkout Session",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"smichea@gmail.com\",\r\n    \"tpg_id\":\"test1\",\r\n    \"value\":100.0,\r\n    \"token\":\"testtoken\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/strcheckout",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"strcheckout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
