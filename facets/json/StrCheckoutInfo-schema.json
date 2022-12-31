@@ -4,15 +4,27 @@
     "id": "StrCheckoutInfo",
     "title": "Checkout Info",
     "type": "object",
-    "properties": {"creationDate": {
-        "storages": ["SQL"],
-        "nullable": true,
-        "format": "date-time",
-        "description": "creation date",
-        "readOnly": false,
-        "versionable": false,
-        "id": "CE_StrCheckoutInfo_creationDate",
-        "title": "StrCheckoutInfo.creationDate",
-        "type": "string"
-    }}
+    "properties": {
+        "inputInfo": {
+            "storages": ["SQL"],
+            "nullable": true,
+            "description": "Input info",
+            "readOnly": false,
+            "versionable": false,
+            "id": "CE_StrCheckoutInfo_inputInfo",
+            "title": "StrCheckoutInfo.inputInfo",
+            "type": "string"
+        },
+        "creationDate": {
+            "storages": ["SQL"],
+            "nullable": true,
+            "format": "date-time",
+            "description": "creation date",
+            "readOnly": false,
+            "versionable": false,
+            "id": "CE_StrCheckoutInfo_creationDate",
+            "title": "StrCheckoutInfo.creationDate",
+            "type": "string"
+        }
+    }
 }
