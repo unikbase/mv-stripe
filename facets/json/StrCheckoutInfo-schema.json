@@ -15,6 +15,16 @@
             "title": "StrCheckoutInfo.inputInfo",
             "type": "string"
         },
+        "response": {
+            "storages": ["SQL"],
+            "nullable": true,
+            "description": "API response",
+            "readOnly": false,
+            "versionable": false,
+            "id": "CE_StrCheckoutInfo_response",
+            "title": "StrCheckoutInfo.response",
+            "type": "string"
+        },
         "creationDate": {
             "storages": ["SQL"],
             "nullable": true,
