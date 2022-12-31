@@ -34,7 +34,7 @@ public class CheckoutSessionScript extends EndpointScript {
 	//@Inject
 	//private CredentialHelperService credentialHelperService;
 
-	private static final java.util.logging.Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
+	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
 
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
@@ -65,9 +65,9 @@ public class CheckoutSessionScript extends EndpointScript {
 		Repository defaultRepo = repositoryService.findDefaultRepository();
 		try {
 			String uuid = crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);
-			System.out.println("checkoutInfo instance " + uuid + " created");
+			Log.info("checkoutInfo instance {} created",uuid);
 		} catch (Exception ex) {
-			throw new BusinessException(ex);
+			throw new BusinessApiException(ex);
 		}
 
 
