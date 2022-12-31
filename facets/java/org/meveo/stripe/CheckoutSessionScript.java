@@ -115,6 +115,7 @@ public class CheckoutSessionScript extends EndpointScript {
 			Session session = Session.create(params);
 			Log.info("session {}", session);
 			responseUrl = session.getUrl();
+			Log.info("responseUrl {}", responseUrl);
 		} catch (StripeException ex) {
 			Log.error("Stripe error", ex);
 		}
