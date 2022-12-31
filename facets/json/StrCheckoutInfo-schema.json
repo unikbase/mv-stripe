@@ -36,6 +36,17 @@
             "title": "StrCheckoutInfo.creationDate",
             "type": "string"
         },
+        "email": {
+            "storages": ["SQL"],
+            "nullable": true,
+            "description": "email",
+            "readOnly": false,
+            "versionable": false,
+            "id": "CE_StrCheckoutInfo_email",
+            "title": "StrCheckoutInfo.email",
+            "type": "string",
+            "maxLength": 200
+        },
         "responseCode": {
             "storages": ["SQL"],
             "nullable": true,
