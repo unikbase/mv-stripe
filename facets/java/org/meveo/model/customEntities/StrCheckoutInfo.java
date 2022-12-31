@@ -26,6 +26,8 @@ public class StrCheckoutInfo implements CustomEntity {
 
     private Instant creationDate;
 
+    private String responseCode;
+
     @Override()
     public String getUuid() {
         return uuid;
@@ -65,6 +67,14 @@ public class StrCheckoutInfo implements CustomEntity {
 
     public void setCreationDate(Instant creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(String responseCode) {
+        this.responseCode = responseCode;
     }
 
     @Override()
