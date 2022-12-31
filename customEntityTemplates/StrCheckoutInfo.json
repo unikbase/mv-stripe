@@ -1,6 +1,7 @@
 {
   "code" : "StrCheckoutInfo",
   "name" : "Checkout Info",
+  "description" : "Info received to create checkout session",
   "customEntityCategoryCode" : "stripe",
   "availableStorages" : [ "SQL" ],
   "sqlStorageConfiguration" : {
