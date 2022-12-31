@@ -1,0 +1,10 @@
+{
+  "code" : "StrCheckoutInfo",
+  "name" : "Checkout Info",
+  "availableStorages" : [ "SQL" ],
+  "sqlStorageConfiguration" : {
+    "storeAsTable" : true
+  },
+  "samples" : [ ],
+  "audited" : false
+}
