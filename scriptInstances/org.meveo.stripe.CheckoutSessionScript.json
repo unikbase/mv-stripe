@@ -2,7 +2,13 @@
   "code" : "org.meveo.stripe.CheckoutSessionScript",
   "description" : "create stripe checkout session",
   "inputs" : [ ],
-  "outputs" : [ ],
+  "outputs" : [ {
+    "name" : "responseUrl",
+    "type" : "String"
+  }, {
+    "name" : "intendedLocales",
+    "type" : "List"
+  } ],
   "generateOutputs" : false,
   "type" : "JAVA",
   "transactionType" : "SAME",
