@@ -3,5 +3,16 @@
     "$schema": "http://json-schema.org/draft-07/schema",
     "id": "StrCheckoutInfo",
     "title": "Checkout Info",
-    "type": "object"
+    "type": "object",
+    "properties": {"creationDate": {
+        "storages": ["SQL"],
+        "nullable": true,
+        "format": "date-time",
+        "description": "creation date",
+        "readOnly": false,
+        "versionable": false,
+        "id": "CE_StrCheckoutInfo_creationDate",
+        "title": "StrCheckoutInfo.creationDate",
+        "type": "string"
+    }}
 }
