@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.stripe.exception.StripeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.meveo.model.customEntities.StrCheckoutInfo;
@@ -111,9 +112,13 @@ public class CheckoutSessionScript extends EndpointScript {
                 .setPrice("price_1MDdCZDFTHQUCZxeVopcF11X")
                 .build())
             .build();
-      Session session = Session.create(params);
-	  Log.info("session {}", session);
-	  responseUrl=session.getUrl();
+	  try{
+      	Session session = Session.create(params);
+		Log.info("session {}", session);
+		responseUrl=session.getUrl();
+	  } catch(StripeException ex){
+		Log.error("Stripe error",ex);
+	  }
 	}
 
 }
