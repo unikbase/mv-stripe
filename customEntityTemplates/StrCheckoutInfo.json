@@ -1,6 +1,7 @@
 {
   "code" : "StrCheckoutInfo",
   "name" : "Checkout Info",
+  "customEntityCategoryCode" : "stripe",
   "availableStorages" : [ "SQL" ],
   "sqlStorageConfiguration" : {
     "storeAsTable" : true
