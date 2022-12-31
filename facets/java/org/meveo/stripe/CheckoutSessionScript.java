@@ -40,7 +40,7 @@ public class CheckoutSessionScript extends EndpointScript {
 
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
 
-	private String responseUrl;
+	private String responseUrl="";
 
 	public String getResponseUrl() {
 		return responseUrl;
@@ -100,8 +100,8 @@ public class CheckoutSessionScript extends EndpointScript {
 		try {
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
-					.setSuccessUrl("onboarding.unikbase.com/success.html")
-					.setCancelUrl("onboarding.unikbase.com/cancel.html")
+					.setSuccessUrl("https://onboarding.unikbase.com/success.html")
+					.setCancelUrl("https://onboarding.unikbase.com/cancel.html")
 					.setAutomaticTax(
 							SessionCreateParams.AutomaticTax.builder()
 									.setEnabled(true)
