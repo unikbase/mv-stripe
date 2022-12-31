@@ -48,6 +48,12 @@
       <version>7.1.1-beta.1</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.stripe</groupId>
+      <artifactId>stripe-java</artifactId>
+      <version>22.3.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>
