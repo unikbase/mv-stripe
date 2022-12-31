@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.HashMap;
 
 import org.meveo.service.script.Script;
-import org.meveo.api.exception.BusinessApiException;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.storage.Repository;
 import org.meveo.service.storage.RepositoryService;
 import org.meveo.api.persistence.CrossStorageApi;
@@ -44,7 +44,7 @@ public class CheckoutSessionScript extends EndpointScript {
 
 		// as long as we have an email we process the payment
 		if (parameters.containsKey("email")) {
-			checkoutInfo.setEmail(parameters.get("email"));
+			checkoutInfo.setEmail(parameters.get("email").toString());
 		} else {
 			endpointResponse.setStatus(400);
 			endpointResponse.setErrorMessage("missing email");
@@ -52,13 +52,13 @@ public class CheckoutSessionScript extends EndpointScript {
 
 		Map<String, String> inputInfo = new HashMap<>();
 		if (parameters.containsKey("tpk_id")) {
-			inputInfo.put("tpk_id", parameters.get("tpk_id"));
+			inputInfo.put("tpk_id", parameters.get("tpk_id").toString());
 		}
 		if (parameters.containsKey("value")) {
-			inputInfo.put("value", parameters.get("value"));
+			inputInfo.put("value", parameters.get("value").toString());
 		}
 		if (parameters.containsKey("token")) {
-			inputInfo.put("token", parameters.get("token"));
+			inputInfo.put("token", parameters.get("token").toString());
 		}
 		checkoutInfo.setInputInfo(inputInfo);
 
@@ -67,7 +67,7 @@ public class CheckoutSessionScript extends EndpointScript {
 			String uuid = crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);
 			Log.info("checkoutInfo instance {} created",uuid);
 		} catch (Exception ex) {
-			throw new BusinessApiException(ex);
+			throw new BusinessException(ex);
 		}
 
 
