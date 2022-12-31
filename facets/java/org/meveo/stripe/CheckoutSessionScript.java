@@ -8,12 +8,17 @@ import org.meveo.admin.exception.BusinessException;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CheckoutSessionScript extends Script {
+  
+  	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
 	
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
-		super.execute(parameters);
+      Log.info("received {}",parameters);
+		
 	}
 	
 }
