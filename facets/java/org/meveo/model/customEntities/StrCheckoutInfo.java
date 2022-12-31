@@ -20,6 +20,8 @@ public class StrCheckoutInfo implements CustomEntity {
     @JsonIgnore()
     private DBStorageType storages;
 
+    private String inputInfo;
+
     private Instant creationDate;
 
     @Override()
@@ -37,6 +39,14 @@ public class StrCheckoutInfo implements CustomEntity {
 
     public void setStorages(DBStorageType storages) {
         this.storages = storages;
+    }
+
+    public String getInputInfo() {
+        return inputInfo;
+    }
+
+    public void setInputInfo(String inputInfo) {
+        this.inputInfo = inputInfo;
     }
 
     public Instant getCreationDate() {
