@@ -22,6 +22,8 @@ public class StrCheckoutInfo implements CustomEntity {
 
     private String inputInfo;
 
+    private String response;
+
     private Instant creationDate;
 
     @Override()
@@ -47,6 +49,14 @@ public class StrCheckoutInfo implements CustomEntity {
 
     public void setInputInfo(String inputInfo) {
         this.inputInfo = inputInfo;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public Instant getCreationDate() {
