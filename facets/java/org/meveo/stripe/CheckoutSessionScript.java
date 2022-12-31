@@ -109,7 +109,7 @@ public class CheckoutSessionScript extends EndpointScript {
 					.addLineItem(
 							SessionCreateParams.LineItem.builder()
 									.setQuantity(1L)
-									.setPrice("price_1MKwczDFTHQUCZxeHKgxyjOC")
+									.setPrice("price_1MDdCZDFTHQUCZxeVopcF11X")
 									.build())
 					.build();
 			Session session = Session.create(params);
