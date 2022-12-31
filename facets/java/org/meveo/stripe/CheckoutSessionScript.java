@@ -35,14 +35,14 @@ public class CheckoutSessionScript extends EndpointScript {
 	@Inject
 	private RepositoryService repositoryService;
 
-	//@Inject
-	//private CredentialHelperService credentialHelperService;
+	// @Inject
+	// private CredentialHelperService credentialHelperService;
 
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
 
 	private String responseUrl;
 
-	public String getResponseUrl(){
+	public String getResponseUrl() {
 		return responseUrl;
 	}
 
@@ -72,53 +72,52 @@ public class CheckoutSessionScript extends EndpointScript {
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
 		String json = null;
-        try {
-            json = objectMapper.writeValueAsString(inputInfo);
-            System.out.println(json);
-        } catch (JsonProcessingException e) {
+		try {
+			json = objectMapper.writeValueAsString(inputInfo);
+			System.out.println(json);
+		} catch (JsonProcessingException e) {
 			throw new BusinessException(e);
-        }
+		}
 		checkoutInfo.setInputInfo(json);
 
 		Repository defaultRepo = repositoryService.findDefaultRepository();
 		try {
 			String uuid = crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);
-			Log.info("checkoutInfo instance {} created",uuid);
+			Log.info("checkoutInfo instance {} created", uuid);
 		} catch (Exception ex) {
 			throw new BusinessException(ex);
 		}
 
-
-		//retrieve apiKey from credential
-		//MvCredential credential = credentialHelperService.getCredential("stripe.com");
-		//if(credential==null){
-		//	Log.severe("stripe.com credential not found");
-		//	throw new BusinessException("technical error");
-		//}
+		// retrieve apiKey from credential
+		// MvCredential credential =
+		// credentialHelperService.getCredential("stripe.com");
+		// if(credential==null){
+		// Log.severe("stripe.com credential not found");
+		// throw new BusinessException("technical error");
+		// }
 		Stripe.apiKey = "sk_test_51MDclnDFTHQUCZxe4PMxI7uwtGbuYcsw1MMX2jpdEzdjT395Ebq2DM6PwDjPo07MHXkbLDEMWuAlvJwVt7F3Cyf300FpV5C2QC";
 
-		SessionCreateParams params =
-          SessionCreateParams.builder()
-            .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("onboarding.unikbase.com/success.html")
-            .setCancelUrl("onboarding.unikbase.com/cancel.html")
-            .setAutomaticTax(
-              SessionCreateParams.AutomaticTax.builder()
-                .setEnabled(true)
-                .build())
-            .addLineItem(
-              SessionCreateParams.LineItem.builder()
-                .setQuantity(1L)
-                .setPrice("price_1MDdCZDFTHQUCZxeVopcF11X")
-                .build())
-            .build();
-	  try{
-      	Session session = Session.create(params);
-		Log.info("session {}", session);
-		responseUrl=session.getUrl();
-	  } catch(StripeException ex){
-		Log.error("Stripe error",ex);
-	  }
+		try {
+			SessionCreateParams params = SessionCreateParams.builder()
+					.setMode(SessionCreateParams.Mode.PAYMENT)
+					.setSuccessUrl("onboarding.unikbase.com/success.html")
+					.setCancelUrl("onboarding.unikbase.com/cancel.html")
+					.setAutomaticTax(
+							SessionCreateParams.AutomaticTax.builder()
+									.setEnabled(true)
+									.build())
+					.addLineItem(
+							SessionCreateParams.LineItem.builder()
+									.setQuantity(1L)
+									.setPrice("price_1MDdCZDFTHQUCZxeVopcF11X")
+									.build())
+					.build();
+			Session session = Session.create(params);
+			Log.info("session {}", session);
+			responseUrl = session.getUrl();
+		} catch (StripeException ex) {
+			Log.error("Stripe error", ex);
+		}
 	}
 
 }
