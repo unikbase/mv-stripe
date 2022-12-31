@@ -1,5 +1,6 @@
 {
     "storages": ["SQL"],
+    "default": "Info received to create checkout session",
     "$schema": "http://json-schema.org/draft-07/schema",
     "id": "StrCheckoutInfo",
     "title": "Checkout Info",
