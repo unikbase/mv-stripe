@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "65b59241-4310-47f5-8c8e-4a1690957992",
+		"_postman_id": "381b5213-2239-4492-a92f-6ee3db965b40",
 		"name": "Onboarding",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "3389070"
+		"_exporter_id": "18824487"
 	},
 	"item": [
 		{
@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\":\"smichea@gmail.com\",\r\n    \"tpg_id\":\"test1\",\r\n    \"value\":100.0,\r\n    \"token\":\"testtoken\"\r\n}",
+					"raw": "{\r\n    \"email\":\"farhan.munir@qavitech.com\",\r\n    \"tpg_id\":\"test1\",\r\n    \"value\":100.0,\r\n    \"token\":\"testtoken\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,12 +21,51 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/strcheckout",
+					"raw": "{{baseUrl}}/rest/strcheckout",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
+						"rest",
 						"strcheckout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "checkoutSuccess",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/rest/checkoutSuccess/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rest",
+						"checkoutSuccess",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancelStripeSession",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/rest/cancelStripeSession/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"rest",
+						"cancelStripeSession",
+						"1"
 					]
 				}
 			},

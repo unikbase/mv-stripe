@@ -1,0 +1,18 @@
+{
+  "code" : "cancelStripeSession",
+  "secured" : false,
+  "checkPathParams" : true,
+  "serviceCode" : "org.meveo.stripe.StripeCheckoutCancel",
+  "synchronous" : true,
+  "method" : "POST",
+  "parameterMappings" : [ ],
+  "pathParameters" : [ "sessionId" ],
+  "roles" : [ ],
+  "serializeResult" : false,
+  "contentType" : "application/json",
+  "basePath" : "cancelStripeSession",
+  "path" : "/{sessionId}",
+  "pool" : {
+    "usePool" : false
+  }
+}

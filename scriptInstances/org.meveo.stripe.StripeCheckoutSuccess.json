@@ -1,0 +1,12 @@
+{
+  "code" : "org.meveo.stripe.StripeCheckoutSuccess",
+  "inputs" : [ ],
+  "outputs" : [ ],
+  "generateOutputs" : false,
+  "type" : "JAVA",
+  "transactionType" : "SAME",
+  "executionRoles" : [ ],
+  "sourcingRoles" : [ ],
+  "mavenDependencies" : [ ],
+  "importScriptInstances" : [ ]
+}

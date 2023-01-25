@@ -1,0 +1,18 @@
+{
+  "code" : "checkoutSuccess",
+  "secured" : false,
+  "checkPathParams" : true,
+  "serviceCode" : "org.meveo.stripe.StripeCheckoutSuccess",
+  "synchronous" : true,
+  "method" : "POST",
+  "parameterMappings" : [ ],
+  "pathParameters" : [ ],
+  "roles" : [ ],
+  "serializeResult" : false,
+  "contentType" : "application/json",
+  "basePath" : "checkoutSuccess",
+  "path" : "/",
+  "pool" : {
+    "usePool" : false
+  }
+}

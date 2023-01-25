@@ -1,0 +1,15 @@
+{
+  "code" : "org.meveo.stripe.StripeCheckoutCancel",
+  "inputs" : [ {
+    "name" : "sessionId",
+    "type" : "String"
+  } ],
+  "outputs" : [ ],
+  "generateOutputs" : false,
+  "type" : "JAVA",
+  "transactionType" : "SAME",
+  "executionRoles" : [ ],
+  "sourcingRoles" : [ ],
+  "mavenDependencies" : [ ],
+  "importScriptInstances" : [ ]
+}

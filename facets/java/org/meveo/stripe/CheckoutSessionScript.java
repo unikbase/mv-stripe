@@ -35,8 +35,8 @@ public class CheckoutSessionScript extends EndpointScript {
 	@Inject
 	private RepositoryService repositoryService;
 
-	// @Inject
-	// private CredentialHelperService credentialHelperService;
+	//@Inject
+	//private CredentialHelperService credentialHelperService;
 
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
 
@@ -81,21 +81,26 @@ public class CheckoutSessionScript extends EndpointScript {
 		checkoutInfo.setInputInfo(json);
 
 		Repository defaultRepo = repositoryService.findDefaultRepository();
+        String uuid = null;
 		try {
-			String uuid = crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);
+			uuid = crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);
 			Log.info("checkoutInfo instance {} created", uuid);
 		} catch (Exception ex) {
 			throw new BusinessException(ex);
 		}
 
 		// retrieve apiKey from credential
-		// MvCredential credential =
-		// credentialHelperService.getCredential("stripe.com");
-		// if(credential==null){
-		// Log.severe("stripe.com credential not found");
-		// throw new BusinessException("technical error");
-		// }
-		Stripe.apiKey = "sk_test_51MDclnDFTHQUCZxe4PMxI7uwtGbuYcsw1MMX2jpdEzdjT395Ebq2DM6PwDjPo07MHXkbLDEMWuAlvJwVt7F3Cyf300FpV5C2QC";
+		//MvCredential credential =
+		//credentialHelperService.getCredential("stripe.com");
+		//if(credential==null){
+		//	Log.error("stripe.com credential not found");
+		//	throw new BusinessException("technical error");
+		//}
+        //Log.info("========================================================================================");
+        //Log.info("credential.getApiKey()="+credential.getApiKey());
+		
+      //Stripe.apiKey = "sk_test_51ME7KzF8O6FLWQWJwzBsPG7XXyr1uVSjsRF7J1OkLvusWPUi3aehz6xntJHirHqVdjsdadTHbRF5w9atu3b9QhPk002fWXABem";
+      Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
 
 		try {
 			SessionCreateParams params = SessionCreateParams.builder()
@@ -109,8 +114,14 @@ public class CheckoutSessionScript extends EndpointScript {
 					.addLineItem(
 							SessionCreateParams.LineItem.builder()
 									.setQuantity(1L)
-									.setPrice("price_1MKwk7DFTHQUCZxeOR80Ndym")
+									//.setPrice("price_1MLsFkF8O6FLWQWJ8uBLWETX")
+              						//.setPrice("price_1MTjrKF8O6FLWQWJC7n4Qkfj")
+              						//.setPrice("price_1MTjsRF8O6FLWQWJQ0jfbhL0")
+                                    //.setPrice("price_1MU8GEJQmmmLLXjqVgkTq3NC")
+              					    //.setPrice("price_1MU8mFJQmmmLLXjqtkieBGY6")
+              							.setPrice("price_1MU8ueJQmmmLLXjqGx5Qjblb")
 									.build())
+                    .putMetadata("checkoutInfoId",uuid)               
 					.build();
 			Session session = Session.create(params);
 			Log.info("session {}", session);
