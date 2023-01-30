@@ -3,6 +3,8 @@ package org.meveo.stripe;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import javax.mail.internet.MimeMessage.RecipientType;
 
 
 import org.meveo.service.script.Script;
+import org.meveo.api.rest.technicalservice.EndpointScript;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.storage.Repository;
 import org.meveo.service.storage.RepositoryService;
@@ -21,15 +24,16 @@ import org.meveo.api.persistence.CrossStorageApi;
 import org.meveo.model.customEntities.StrCheckoutInfo;
 import org.meveo.commons.utils.MailerSessionFactory;
 
+
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.exception.StripeException;
 
-public class StripeCheckoutCancel extends Script {
+public class StripeCheckoutCancel extends EndpointScript {
 	
     private static final Logger Log = LoggerFactory.getLogger(StripeCheckoutCancel.class);
-    private static final String SUCCESS = "success";
+    private static final String SUCCESS = "success";    
     private String sessionId;
   
     @Inject
@@ -41,27 +45,46 @@ public class StripeCheckoutCancel extends Script {
     @Inject
     private MailerSessionFactory mailerSessionFactory;
   
+  
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		super.execute(parameters);
+        boolean sendEmail = false;
+        //this.sessionId = "cs_test_a1BENXl7ATXp0QvAtyjM1DQRsf4OM1Rv8QqAFKmk20xMsh9eBnTHSqfVuJ";
+        Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
       
-        Stripe.apiKey = "sk_test_51ME7KzF8O6FLWQWJwzBsPG7XXyr1uVSjsRF7J1OkLvusWPUi3aehz6xntJHirHqVdjsdadTHbRF5w9atu3b9QhPk002fWXABem";
+		
+        if(this.sessionId == null || this.sessionId.trim().length() == 0 ){
+            Log.info("Called from stripe.com for payment failure");
+            sendEmail = true;
+            Map object = (HashMap)((HashMap)parameters.get("data")).get("object");
+            this.sessionId = object.get("id").toString();            
+        }
         Log.info("===============================================================");
-        Log.info("data = "+parameters.get("data").toString());
-        Log.info("Called from stripe.com");
-        Map<String, String> checkOutInfoMap = this.extractCheckoutInfo(parameters.get("data"));
-        String checkoutInfoId = checkOutInfoMap.get("checkoutInfoId");
-      	String customerEmail = checkOutInfoMap.get("customerEmail");
-        Log.info("checkOutInfoId="+checkoutInfoId);
-        Log.info("customerEmail="+customerEmail);
+      	Log.info("this.sessionId="+this.sessionId);
         Log.info("===============================================================");
+      
+        Session session = null;
+        Map<String, String> metadata = null;
+        try{
+            session = Session.retrieve( this.sessionId.trim() );
+            metadata = session.getMetadata();
+        }catch(StripeException ex)  {
+            Log.error(ex.getMessage());
+            throw new BusinessException( ex);
+        }
+      
+        String checkoutInfoId = metadata.get("checkoutInfoId");
+        String customerEmail = metadata.get("customerEmail");
+        Log.info("checkoutInfoId="+metadata.get("checkoutInfoId"));
+        Log.info("customerEmail="+metadata.get("customerEmail"));
       
         if(checkoutInfoId != null && checkoutInfoId.length() > 0){
           	Repository defaultRepo = repositoryService.findDefaultRepository();
             try {
                 StrCheckoutInfo checkoutInfo = crossStorageApi.find(defaultRepo, checkoutInfoId, StrCheckoutInfo.class);
                 checkoutInfo.setResponseCode("400");
-                checkoutInfo.setResponse(parameters.get("data").toString());
+                checkoutInfo.setResponse(session.toString());
                 crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);            
                 Log.info("checkoutInfo instance {} updated", checkoutInfoId);
             } catch (Exception ex) {
@@ -71,25 +94,10 @@ public class StripeCheckoutCancel extends Script {
             Log.error("Missing Data - No checkout Info Id is found");
         }
         
-        if(customerEmail != null){
+        if(customerEmail != null && sendEmail){            		
             this.sendFailureEmail(customerEmail);
         }
-      
 	}
-  
-    private Map<String, String> extractCheckoutInfo(Object paramInfo){
-        Map<String, String> checkoutInfo = new HashMap<>();      	
-        try{
-            Map object = (HashMap)((HashMap)paramInfo).get("object");
-            Map metadata = (HashMap)object.get("metadata");
-            Map customerDetails =(HashMap)object.get("customer_details");
-            checkoutInfo.put("checkoutInfoId",metadata.get("checkoutInfoId").toString());
-            checkoutInfo.put("customerEmail",customerDetails.get("email").toString());
-        }catch(ClassCastException ex){
-          	Log.error("checkoutInfo cannot be extracted ");
-        }		
-        return checkoutInfo;
-    }
   
     private void sendFailureEmail(String emailAddressTo){
         String result = null;
@@ -117,19 +125,21 @@ public class StripeCheckoutCancel extends Script {
 
         String htmlMessage = message_en;
         Log.info("Sending failure email to {}", emailAddressTo);
-
+        boolean isFrench = this.sendInFrench();
         try {
             javax.mail.Session mailSession = mailerSessionFactory.getSession();
             MimeMessage emailMessage = new MimeMessage(mailSession);
             emailMessage.setFrom(new InternetAddress("hello@unikbase.com"));
             emailMessage.addRecipient(RecipientType.TO, new InternetAddress(emailAddressTo));
-            emailMessage.setSubject(subject_en);
-            emailMessage.setText(message_en);
+            emailMessage.setSubject(isFrench ? subject_fr : subject_en);
+            emailMessage.setText(isFrench ? message_fr : message_en);
             emailMessage.setContent(htmlMessage, "text/html");
+            emailMessage.setContentLanguage(isFrench ? new String[]{"fr-FR"} : new String[]{"en-US"});
+            emailMessage.setHeader("Accept-Language",(isFrench ? "fr-FR":"en-US"));
             Transport.send(emailMessage);
             result = SUCCESS;
         } catch (Exception e) {
-            Log.error("Sending stripe failure via email failed.", e);
+            Log.error("Sending stripe failure email.", e);
             result = "server_error";
             return;
         }
@@ -139,5 +149,14 @@ public class StripeCheckoutCancel extends Script {
     public void setSessionId( String sessionId){
         this.sessionId = sessionId;
     }
+  
+    private boolean sendInFrench(){
+    	List<Locale> locales = this.getIntendedLocales();
+        Locale locale =  locales != null && locales.size() > 0 ? locales.get(0) : null;
+        String languageCode = locale != null ?locale.getLanguage().toLowerCase() : "en";
+        return languageCode.equals("fr");
+    }
+  
+     
 	
 }

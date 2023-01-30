@@ -1,7 +1,10 @@
 {
   "code" : "org.meveo.stripe.StripeCheckoutSuccess",
   "inputs" : [ ],
-  "outputs" : [ ],
+  "outputs" : [ {
+    "name" : "intendedLocales",
+    "type" : "List"
+  } ],
   "generateOutputs" : false,
   "type" : "JAVA",
   "transactionType" : "SAME",

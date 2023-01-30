@@ -105,8 +105,8 @@ public class CheckoutSessionScript extends EndpointScript {
 		try {
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
-					.setSuccessUrl("https://onboarding.unikbase.com/success.html")
-					.setCancelUrl("https://onboarding.unikbase.com/cancel.html")
+					.setSuccessUrl("https://unikbase-infra.github.io/env-onboarding-dev/#/success")
+					.setCancelUrl("https://unikbase-infra.github.io/env-onboarding-dev/#/cancel")
 					.setAutomaticTax(
 							SessionCreateParams.AutomaticTax.builder()
 									.setEnabled(true)
@@ -121,9 +121,11 @@ public class CheckoutSessionScript extends EndpointScript {
               					    //.setPrice("price_1MU8mFJQmmmLLXjqtkieBGY6")
               							.setPrice("price_1MU8ueJQmmmLLXjqGx5Qjblb")
 									.build())
-                    .putMetadata("checkoutInfoId",uuid)               
+                    .putMetadata("checkoutInfoId",uuid) 
+                    .putMetadata("customerEmail",checkoutInfo.getEmail())
 					.build();
 			Session session = Session.create(params);
+          
 			Log.info("session {}", session);
 			responseUrl = session.getUrl();
 			Log.info("responseUrl {}", responseUrl);

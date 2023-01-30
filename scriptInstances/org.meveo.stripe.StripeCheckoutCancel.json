@@ -4,7 +4,10 @@
     "name" : "sessionId",
     "type" : "String"
   } ],
-  "outputs" : [ ],
+  "outputs" : [ {
+    "name" : "intendedLocales",
+    "type" : "List"
+  } ],
   "generateOutputs" : false,
   "type" : "JAVA",
   "transactionType" : "SAME",
