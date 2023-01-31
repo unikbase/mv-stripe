@@ -1,0 +1,24 @@
+{
+  "code" : "stripeNoPaymentCheckoutSuccess",
+  "secured" : true,
+  "checkPathParams" : true,
+  "serviceCode" : "org.meveo.stripe.StripeNoPaymentCheckoutSuccess",
+  "synchronous" : true,
+  "method" : "GET",
+  "parameterMappings" : [ {
+    "serviceParameter" : "customerEmail",
+    "multivalued" : false,
+    "parameterName" : "customerEmail",
+    "valueRequired" : false
+  } ],
+  "pathParameters" : [ ],
+  "roles" : [ ],
+  "returnedVariableName" : "result",
+  "serializeResult" : true,
+  "contentType" : "application/json",
+  "basePath" : "stripeNoPaymentCheckoutSuccess",
+  "path" : "/",
+  "pool" : {
+    "usePool" : false
+  }
+}
