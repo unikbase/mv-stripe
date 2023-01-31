@@ -30,7 +30,6 @@ public class StripeCheckoutSuccess extends EndpointScript {
 	
     private static final Logger Log = LoggerFactory.getLogger(StripeCheckoutSuccess.class);
     private static final String SUCCESS = "success";
-    private static final List<String> FRENCH_SPEAKING_COUNTRIES = Arrays.asList("BE", "BJ", "BF", "BI", "CM", "TD", "CI", "CD", "DJ", "GQ", "FR", "HT", "LU", "MG", "ML", "MC", "NE", "RW", "SN", "SC", "CH", "TG", "VU");
 
     @Inject
 	private RepositoryService repositoryService;
@@ -91,7 +90,6 @@ public class StripeCheckoutSuccess extends EndpointScript {
       
 	}
   
-    
   
     private void sendSuccessEmail(String emailAddressTo){
         String result = null;

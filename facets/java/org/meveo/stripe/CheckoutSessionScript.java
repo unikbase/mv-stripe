@@ -14,8 +14,8 @@ import org.meveo.api.persistence.CrossStorageApi;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-//import org.meveo.service.admin.impl.credentials.CredentialHelperService;
-//import org.meveo.model.admin.MvCredential;
+import org.meveo.service.admin.impl.credentials.CredentialHelperService;
+import org.meveo.model.admin.MvCredential;
 
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
@@ -35,11 +35,21 @@ public class CheckoutSessionScript extends EndpointScript {
 	@Inject
 	private RepositoryService repositoryService;
 
-	//@Inject
-	//private CredentialHelperService credentialHelperService;
+	@Inject
+	private CredentialHelperService credentialHelperService;
 
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
-
+    public static Map<String, String> priceMap;
+  
+    static {
+        priceMap = new HashMap<>();
+        priceMap.put("0", "0");
+        priceMap.put("1", "price_1MWOHoJQmmmLLXjqRUnYQ69J");
+        priceMap.put("2", "price_1MU8ueJQmmmLLXjqGx5Qjblb");
+        priceMap.put("3", "price_1MWOILJQmmmLLXjqLjuLjV9y");
+        priceMap.put("4", "price_1MWOHoJQmmmLLXjqRUnYQ69J");
+        priceMap.put("5", "price_1MWOIgJQmmmLLXjqT9epLq7d");
+    }
 	private String responseUrl="";
 
 	public String getResponseUrl() {
@@ -49,6 +59,7 @@ public class CheckoutSessionScript extends EndpointScript {
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		Log.info("received {}", parameters);
+        String priceId = "2";
 		StrCheckoutInfo checkoutInfo = new StrCheckoutInfo();
 		checkoutInfo.setCreationDate(Instant.now());
 
@@ -70,11 +81,16 @@ public class CheckoutSessionScript extends EndpointScript {
 		if (parameters.containsKey("token")) {
 			inputInfo.put("token", parameters.get("token").toString());
 		}
+        if (parameters.containsKey("price_id")) {
+			priceId = parameters.get("price_id").toString();
+            if(priceMap.get(priceId) == null){
+                throw new BusinessException("No Price is defined against price_id provided");
+            }
+		}
 		ObjectMapper objectMapper = new ObjectMapper();
 		String json = null;
 		try {
 			json = objectMapper.writeValueAsString(inputInfo);
-			System.out.println(json);
 		} catch (JsonProcessingException e) {
 			throw new BusinessException(e);
 		}
@@ -90,17 +106,22 @@ public class CheckoutSessionScript extends EndpointScript {
 		}
 
 		// retrieve apiKey from credential
-		//MvCredential credential =
-		//credentialHelperService.getCredential("stripe.com");
-		//if(credential==null){
-		//	Log.error("stripe.com credential not found");
-		//	throw new BusinessException("technical error");
-		//}
-        //Log.info("========================================================================================");
-        //Log.info("credential.getApiKey()="+credential.getApiKey());
+		MvCredential credential =
+		credentialHelperService.getCredential("stripe.com");
+		if(credential==null){
+			Log.error("stripe.com credential not found, hardcoding secret api keys");
+			//throw new BusinessException("technical error");
+            Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
+		}else{
+            Log.info("========================================================================================");
+            Log.info("credential.getApiKey()="+credential.getApiKey());
+            Log.info("Api key should be     =sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3");
+            Stripe.apiKey = credential.getApiKey();
+        }
+        
 		
-      //Stripe.apiKey = "sk_test_51ME7KzF8O6FLWQWJwzBsPG7XXyr1uVSjsRF7J1OkLvusWPUi3aehz6xntJHirHqVdjsdadTHbRF5w9atu3b9QhPk002fWXABem";
-      Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
+      
+        
 
 		try {
 			SessionCreateParams params = SessionCreateParams.builder()
@@ -114,12 +135,7 @@ public class CheckoutSessionScript extends EndpointScript {
 					.addLineItem(
 							SessionCreateParams.LineItem.builder()
 									.setQuantity(1L)
-									//.setPrice("price_1MLsFkF8O6FLWQWJ8uBLWETX")
-              						//.setPrice("price_1MTjrKF8O6FLWQWJC7n4Qkfj")
-              						//.setPrice("price_1MTjsRF8O6FLWQWJQ0jfbhL0")
-                                    //.setPrice("price_1MU8GEJQmmmLLXjqVgkTq3NC")
-              					    //.setPrice("price_1MU8mFJQmmmLLXjqtkieBGY6")
-              							.setPrice("price_1MU8ueJQmmmLLXjqGx5Qjblb")
+									.setPrice(priceMap.get(priceId))
 									.build())
                     .putMetadata("checkoutInfoId",uuid) 
                     .putMetadata("customerEmail",checkoutInfo.getEmail())
