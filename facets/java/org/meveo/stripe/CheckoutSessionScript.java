@@ -39,8 +39,10 @@ public class CheckoutSessionScript extends EndpointScript {
 	private CredentialHelperService credentialHelperService;
 
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
+    public static final String SUCCESS_URL = "https://unikbase-infra.github.io/env-onboarding-dev/#/success";
+    public static final String CANCEL_URL = "https://unikbase-infra.github.io/env-onboarding-dev/#/cancel";
     public static Map<String, String> priceMap;
-  
+    
     static {
         priceMap = new HashMap<>();
         priceMap.put("0", "0");
@@ -70,7 +72,17 @@ public class CheckoutSessionScript extends EndpointScript {
 			endpointResponse.setStatus(400);
 			endpointResponse.setErrorMessage("missing email");
 		}
-
+      
+        if (parameters.containsKey("price_id")) {
+			priceId = parameters.get("price_id").toString();
+            if(priceMap.get(priceId) == null){
+                throw new BusinessException("No Price is defined against price_id provided");
+            }else if("0".equals(priceMap.get(priceId))){
+                responseUrl = this.endpointRequest.getRequestURL().substring(0,this.endpointRequest.getRequestURL().indexOf("/rest/"))+"/rest/stripeNoPaymentCheckoutSuccess?customerEmail="+parameters.get("email").toString();
+                return;
+            }
+		}
+      
 		Map<String, String> inputInfo = new HashMap<>();
 		if (parameters.containsKey("tpk_id")) {
 			inputInfo.put("tpk_id", parameters.get("tpk_id").toString());
@@ -81,12 +93,7 @@ public class CheckoutSessionScript extends EndpointScript {
 		if (parameters.containsKey("token")) {
 			inputInfo.put("token", parameters.get("token").toString());
 		}
-        if (parameters.containsKey("price_id")) {
-			priceId = parameters.get("price_id").toString();
-            if(priceMap.get(priceId) == null){
-                throw new BusinessException("No Price is defined against price_id provided");
-            }
-		}
+        
 		ObjectMapper objectMapper = new ObjectMapper();
 		String json = null;
 		try {
@@ -119,15 +126,12 @@ public class CheckoutSessionScript extends EndpointScript {
             Stripe.apiKey = credential.getApiKey();
         }
         
-		
-      
-        
 
 		try {
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
-					.setSuccessUrl("https://unikbase-infra.github.io/env-onboarding-dev/#/success")
-					.setCancelUrl("https://unikbase-infra.github.io/env-onboarding-dev/#/cancel")
+					.setSuccessUrl(SUCCESS_URL)
+					.setCancelUrl(CANCEL_URL)
 					.setAutomaticTax(
 							SessionCreateParams.AutomaticTax.builder()
 									.setEnabled(true)
