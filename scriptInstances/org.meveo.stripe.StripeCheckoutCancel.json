@@ -1,9 +1,6 @@
 {
   "code" : "org.meveo.stripe.StripeCheckoutCancel",
-  "inputs" : [ {
-    "name" : "sessionId",
-    "type" : "String"
-  } ],
+  "inputs" : [ ],
   "outputs" : [ {
     "name" : "intendedLocales",
     "type" : "List"

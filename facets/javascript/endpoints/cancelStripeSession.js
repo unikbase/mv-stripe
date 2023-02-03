@@ -1,39 +1,53 @@
-const cancelStripeSession = async (parameters) =>  {
-	const baseUrl = window.location.origin;
-	const url = new URL(`${window.location.pathname.split('/')[1]}/rest/cancelStripeSession/${parameters.sessionId}`, baseUrl);
-	return fetch(url.toString(), {
-		method: 'POST', 
-		headers : new Headers({
- 			'Content-Type': 'application/json'
-		}),
-		body: JSON.stringify({
-			
-		})
-	});
+import EndpointInterface from "#{API_BASE_URL}/api/rest/endpoint/EndpointInterface.js";
+
+// the request schema, this should be updated
+// whenever changes to the endpoint parameters are made
+// this is important because this is used to validate and parse the request parameters
+const requestSchema = {
+  "title" : "cancelStripeSessionRequest",
+  "id" : "cancelStripeSessionRequest",
+  "default" : "Schema definition for cancelStripeSession",
+  "$schema" : "http://json-schema.org/draft-07/schema",
+  "type" : "object",
+  "properties" : {
+    "sessionId" : {
+      "title" : "sessionId",
+      "type" : "string",
+      "minLength" : 1
+    }
+  }
 }
 
-const cancelStripeSessionForm = (container) => {
-	const html = `<form id='cancelStripeSession-form'>
-		<div id='cancelStripeSession-sessionId-form-field'>
-			<label for='sessionId'>sessionId</label>
-			<input type='text' id='cancelStripeSession-sessionId-param' name='sessionId'/>
-		</div>
-		<button type='button'>Test</button>
-	</form>`;
-
-	container.insertAdjacentHTML('beforeend', html)
-
-	const sessionId = container.querySelector('#cancelStripeSession-sessionId-param');
-
-	container.querySelector('#cancelStripeSession-form button').onclick = () => {
-		const params = {
-			sessionId : sessionId.value !== "" ? sessionId.value : undefined
-		};
-
-		cancelStripeSession(params).then(r => r.text().then(
-				t => alert(t)
-			));
-	};
+// the response schema, this should be updated
+// whenever changes to the endpoint parameters are made
+// this is important because this could be used to parse the result
+const responseSchema = {
+  "title" : "cancelStripeSessionResponse",
+  "id" : "cancelStripeSessionResponse",
+  "default" : "Schema definition for cancelStripeSession",
+  "$schema" : "http://json-schema.org/draft-07/schema",
+  "type" : "object"
 }
 
-export { cancelStripeSession, cancelStripeSessionForm };
+// should contain offline mock data, make sure it adheres to the response schema
+const mockResult = {};
+
+class cancelStripeSession extends EndpointInterface {
+	constructor() {
+		// name and http method, these are inserted when code is generated
+		super("cancelStripeSession", "POST");
+		this.requestSchema = requestSchema;
+		this.responseSchema = responseSchema;
+		this.mockResult = mockResult;
+	}
+
+	getRequestSchema() {
+		return this.requestSchema;
+	}
+
+	getResponseSchema() {
+		return this.responseSchema;
+	}
+}
+
+export default new cancelStripeSession();

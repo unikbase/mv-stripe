@@ -54,19 +54,20 @@ public class StripeCheckoutSuccess extends EndpointScript {
         Log.info("===============================================================");
       
         Session session = null;
-        Map<String, String> metadata = null;
+        String checkoutInfoId = null;
+        String customerEmail = null;
         try{
             session = Session.retrieve( sessionId.trim() );
-            metadata = session.getMetadata();
+            checkoutInfoId = session.getMetadata().get("checkoutInfoId");
+            customerEmail = session.getCustomerDetails().getEmail();
         }catch(StripeException ex)  {
             Log.error(ex.getMessage());
             throw new BusinessException( ex);
         }
       
-        String checkoutInfoId = metadata.get("checkoutInfoId");
-        String customerEmail = metadata.get("customerEmail");
-        Log.info("checkoutInfoId="+metadata.get("checkoutInfoId"));
-        Log.info("customerEmail="+metadata.get("customerEmail"));
+        Log.info("checkoutInfoId="+checkoutInfoId);
+        Log.info("customerEmail="+customerEmail);
+        
         Log.info("===============================================================");
         
         if(checkoutInfoId != null && checkoutInfoId.length() > 0){

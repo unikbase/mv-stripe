@@ -1,6 +1,6 @@
 {
   "code" : "stripeNoPaymentCheckoutSuccess",
-  "secured" : true,
+  "secured" : false,
   "checkPathParams" : true,
   "serviceCode" : "org.meveo.stripe.StripeNoPaymentCheckoutSuccess",
   "synchronous" : true,

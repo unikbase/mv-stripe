@@ -34,8 +34,7 @@ public class StripeCheckoutCancel extends EndpointScript {
 	
     private static final Logger Log = LoggerFactory.getLogger(StripeCheckoutCancel.class);
     private static final String SUCCESS = "success";    
-    private String sessionId;
-  
+      
     @Inject
 	private RepositoryService repositoryService;
   
@@ -50,34 +49,49 @@ public class StripeCheckoutCancel extends EndpointScript {
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		super.execute(parameters);
         boolean sendEmail = false;
+        String sessionId = "";
         //this.sessionId = "cs_test_a1BENXl7ATXp0QvAtyjM1DQRsf4OM1Rv8QqAFKmk20xMsh9eBnTHSqfVuJ";
         Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
       
-		
-        if(this.sessionId == null || this.sessionId.trim().length() == 0 ){
-            Log.info("Called from stripe.com for payment failure");
-            sendEmail = true;
+        if (parameters.containsKey("sessionId")) {
+			sessionId = parameters.get("sessionId").toString();
+		} else {
             Map object = (HashMap)((HashMap)parameters.get("data")).get("object");
-            this.sessionId = object.get("id").toString();            
+            sessionId = object.get("id").toString(); 
+            sendEmail = true;
+            if(sessionId == null ){
+              	endpointResponse.setStatus(400);
+				endpointResponse.setErrorMessage("missing sessionId");
+            	return;
+            }
+		}
+        
+        if(sessionId.length() > 66){
+            endpointResponse.setStatus(400);
+			endpointResponse.setErrorMessage("sessionId length exceeds 66 characters");
+            return;
         }
+        
+		Log.info("===============================================================");
+        Log.info("sessionId="+sessionId);
         Log.info("===============================================================");
-      	Log.info("this.sessionId="+this.sessionId);
-        Log.info("===============================================================");
-      
-        Session session = null;
-        Map<String, String> metadata = null;
+        
+        Session session = null;        
+        String checkoutInfoId = null;
+        String customerEmail = null;
         try{
-            session = Session.retrieve( this.sessionId.trim() );
-            metadata = session.getMetadata();
+            session = Session.retrieve( sessionId.trim() );
+            checkoutInfoId = session.getMetadata().get("checkoutInfoId");
+            if(session.getCustomerDetails() != null){
+                customerEmail = session.getCustomerDetails().getEmail();
+            }
         }catch(StripeException ex)  {
             Log.error(ex.getMessage());
             throw new BusinessException( ex);
         }
       
-        String checkoutInfoId = metadata.get("checkoutInfoId");
-        String customerEmail = metadata.get("customerEmail");
-        Log.info("checkoutInfoId="+metadata.get("checkoutInfoId"));
-        Log.info("customerEmail="+metadata.get("customerEmail"));
+        Log.info("checkoutInfoId="+checkoutInfoId);
+        Log.info("customerEmail="+(customerEmail == null ? "null" : customerEmail));
       
         if(checkoutInfoId != null && checkoutInfoId.length() > 0){
           	Repository defaultRepo = repositoryService.findDefaultRepository();
@@ -146,9 +160,6 @@ public class StripeCheckoutCancel extends EndpointScript {
         Log.info("result: {}", result);
     }
   
-    public void setSessionId( String sessionId){
-        this.sessionId = sessionId;
-    }
   
     private boolean sendInFrench(){
     	List<Locale> locales = this.getIntendedLocales();

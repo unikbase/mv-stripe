@@ -66,19 +66,24 @@ public class CheckoutSessionScript extends EndpointScript {
 		checkoutInfo.setCreationDate(Instant.now());
 
 		// as long as we have an email we process the payment
-		if (parameters.containsKey("email")) {
+		/*if (parameters.containsKey("email")) {
 			checkoutInfo.setEmail(parameters.get("email").toString());
 		} else {
 			endpointResponse.setStatus(400);
 			endpointResponse.setErrorMessage("missing email");
-		}
+		}*/
       
         if (parameters.containsKey("price_id")) {
 			priceId = parameters.get("price_id").toString();
             if(priceMap.get(priceId) == null){
                 throw new BusinessException("No Price is defined against price_id provided");
             }else if("0".equals(priceMap.get(priceId))){
-                responseUrl = this.endpointRequest.getRequestURL().substring(0,this.endpointRequest.getRequestURL().indexOf("/rest/"))+"/rest/stripeNoPaymentCheckoutSuccess?customerEmail="+parameters.get("email").toString();
+                if(parameters.get("email") == null){
+                    endpointResponse.setStatus(400);
+			        endpointResponse.setErrorMessage("missing email, if provided we can send email");
+                }else{
+                    responseUrl = this.endpointRequest.getRequestURL().toString().substring(0,this.endpointRequest.getRequestURL().toString().indexOf("/rest/"))+"/rest/stripeNoPaymentCheckoutSuccess?customerEmail="+parameters.get("email").toString();
+                }                
                 return;
             }
 		}
@@ -142,7 +147,9 @@ public class CheckoutSessionScript extends EndpointScript {
 									.setPrice(priceMap.get(priceId))
 									.build())
                     .putMetadata("checkoutInfoId",uuid) 
-                    .putMetadata("customerEmail",checkoutInfo.getEmail())
+                    //.putMetadata("customerEmail",checkoutInfo.getEmail())
+                    .putMetadata("price",priceMap.get(priceId))
+                    .putMetadata("tpkId",inputInfo.get("tpk_id"))
 					.build();
 			Session session = Session.create(params);
           
