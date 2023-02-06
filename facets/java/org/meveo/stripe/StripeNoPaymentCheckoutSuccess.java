@@ -10,6 +10,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 
 import org.meveo.service.script.Script;
 import org.meveo.api.rest.technicalservice.EndpointScript;
@@ -57,19 +61,20 @@ public class StripeNoPaymentCheckoutSuccess extends EndpointScript {
         String subject_en = "Your payment to Unikbase has been successfully completed";
         String subject_fr = "Votre paiement auprès d’Unikbase a été effectué avec succès";
       
-        String message_en = new StringBuilder("Congratulations! Your payment has been successfully completed. Thank you for your trust and your purchase.").append("<br/>")
+        String message_en = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
+          						.append("Congratulations! Your payment has been successfully completed. Thank you for your trust and your purchase.").append("<br/>")
           						.append("Your order has been received and will be processed as soon as possible. You will receive a confirmation email when your digital duplicate is ready.").append("<br/>")
-								.append("In the meantime, we invite you to download the Unikbase application on your phone which will be used to store your digital duplicate.").append("<br/>")
-								.append("We are at your disposal,").append("<br/>").append("<br/>").append("<div><img src=\"cid:2\"></div>").append("<br/>")
-          						.append("The Unikbase team").append("<br/>")
+								.append("In the meantime, we invite you to download the Unikbase application on your phone which will be used to store your digital duplicate.").append("<br/>").append("<br/>").append("<br/>")
+								.append("We are at your disposal,").append("<br/>").append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" >The Unikbase team</div>")
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France") .append("<br/>")          
 								.append("Contact hello@unikbase.com").toString();
       
-		String message_fr = new StringBuilder("Félicitations ! Votre paiement a été effectué avec succès. Nous vous remercions de votre confiance et de votre achat.").append("<br/>")
+		String message_fr = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
+          						.append("Félicitations ! Votre paiement a été effectué avec succès. Nous vous remercions de votre confiance et de votre achat.").append("<br/>")
           						.append("Votre commande a été reçue et sera traitée dans les plus brefs délais. Vous recevrez un email de confirmation lorsque votre double numérique sera prêt.").append("<br/>")
-								.append("D’ici là nous vous invitons dès à présent à télécharger sur votre téléphone l’application Unikbase qui servira à stocker votre double numérique. ").append("<br/>")
-								.append("Nous restons à votre disposition,").append("<br/>").append("<br/>")
-          						.append("L’équipe Unikbase").append("<br/>")
+								.append("D’ici là nous vous invitons dès à présent à télécharger sur votre téléphone l’application Unikbase qui servira à stocker votre double numérique. ").append("<br/>").append("<br/>").append("<br/>")
+								.append("Nous restons à votre disposition,").append("<br/>")
+          						.append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" > L’équipe Unikbase</div>")
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France ").append("<br/>")
 								.append("Contact hello@unikbase.com").append("<br/>").toString();
 
@@ -82,31 +87,29 @@ public class StripeNoPaymentCheckoutSuccess extends EndpointScript {
         try {
             javax.mail.Session mailSession = mailerSessionFactory.getSession();
             MimeMessage emailMessage = new MimeMessage(mailSession);
-            /*MimeMultipart content = new MimeMultipart("related");
+            
+          	MimeMultipart content = new MimeMultipart("related");
             MimeBodyPart textPart = new MimeBodyPart();
           
-			textPart.setText(new StringBuilder("<html><head>").append("<title>This is not usually displayed</title>").append("</head>")
-                             .append("<body><div><img src=\"cid:1\"></div><div><strong>").append(isFrench ? message_fr : message_en).append("</strong></div>").toString(), "US-ASCII", "html");
+			textPart.setText(new StringBuilder("<body><strong>")
+                             .append(message_en).append("</strong>").toString(), "US-ASCII", "html");
+          
+          	textPart.setContent(textPart, "text/html");
 
    			content.addBodyPart(textPart);
 
-			MimeBodyPart imagePart = new MimeBodyPart();
-			imagePart.attachFile("resources/teapot.jpg");
-			imagePart.setContentID("<1>");
-			imagePart.setDisposition(MimeBodyPart.INLINE);
-			content.addBodyPart(imagePart);
-
-			MimeBodyPart imagePart = new MimeBodyPart();
-			imagePart.attachFile("resources/teapot2.jpg");
-			imagePart.setContentID("<2>");
-			imagePart.setDisposition(MimeBodyPart.INLINE);
-			content.addBodyPart(imagePart);*/
+			MimeBodyPart messageBodyPart = new MimeBodyPart();
+         	DataSource fds = new FileDataSource("image");
+          
+         	messageBodyPart.setDataHandler(new DataHandler(fds));
+          	messageBodyPart.setDisposition(MimeBodyPart.INLINE);          	
+          	content.addBodyPart(messageBodyPart); 
+         	emailMessage.setContent(content);
 
             emailMessage.setFrom(new InternetAddress("hello@unikbase.com"));
             emailMessage.addRecipient(RecipientType.TO, new InternetAddress(emailAddressTo));
             emailMessage.setSubject(isFrench ? subject_fr : subject_en);
             emailMessage.setText(isFrench ? message_fr : message_en);
-            emailMessage.setContent(htmlMessage, "text/html");
             emailMessage.setContentLanguage(isFrench ? new String[]{"fr-FR"} : new String[]{"en-US"});
             emailMessage.setHeader("Accept-Language",(isFrench ? "fr-FR":"en-US"));
             Transport.send(emailMessage);

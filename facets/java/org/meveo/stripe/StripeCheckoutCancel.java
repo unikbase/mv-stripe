@@ -14,6 +14,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+
 
 import org.meveo.service.script.Script;
 import org.meveo.api.rest.technicalservice.EndpointScript;
@@ -50,10 +56,9 @@ public class StripeCheckoutCancel extends EndpointScript {
 		super.execute(parameters);
         boolean sendEmail = false;
         String sessionId = "";
-        //this.sessionId = "cs_test_a1BENXl7ATXp0QvAtyjM1DQRsf4OM1Rv8QqAFKmk20xMsh9eBnTHSqfVuJ";
         Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
       
-        if (parameters.containsKey("sessionId")) {
+        if (parameters.containsKey("sessionId") && parameters.get("sessionId") != null) {
 			sessionId = parameters.get("sessionId").toString();
 		} else {
             Map object = (HashMap)((HashMap)parameters.get("data")).get("object");
@@ -119,19 +124,19 @@ public class StripeCheckoutCancel extends EndpointScript {
         String subject_en = "Your payment to Unikbase has been refused or cancelled";
         String subject_fr = "Votre paiement auprès d’Unikbase a été refusé ou annulé";
       
-        String message_en = new StringBuilder("We are sorry, but your payment has been refused or cancelled.").append("<br/>")
+        String message_en = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
+          						.append("We are sorry, but your payment has been refused or cancelled.").append("<br/>")
           						.append("There may have been a problem with the payment information you provided, or your bank account may not have authorized the transaction.").append("<br/>")
-								.append("Please check your bank account and credit card information and try again later. If the problem persists, please contact us for further assistance.").append("<br/>")
-								.append("We will be happy to assist you.").append("<br/>").append("<br/>")
-          						.append("The Unikbase team").append("<br/>")
+								.append("Please check your bank account and credit card information and try again later. If the problem persists, please contact us for further assistance.").append("<br/>").append("<br/>").append("<br/>")
+								.append("We will be happy to assist you.").append("<br/>").append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" >The Unikbase team</div>").append("<br/>")          						
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France") .append("<br/>")          
 								.append("Contact hello@unikbase.com").toString();
       
-		String message_fr = new StringBuilder("Nous sommes désolés, mais votre paiement a été refusé ou annulé.").append("<br/>")
+		String message_fr = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
+          						.append("Nous sommes désolés, mais votre paiement a été refusé ou annulé.").append("<br/>")
           						.append("Il se peut qu'il y ait eu un problème avec les informations de paiement que vous avez fournies, ou que votre compte bancaire n'ait pas autorisé la transaction.").append("<br/>")
-								.append("Veuillez vérifier les informations de votre compte bancaire et de votre carte de crédit, et réessayer ultérieurement. Si le problème persiste, veuillez nous contacter pour plus d'assistance. ").append("<br/>")
-								.append("Nous restons à votre disposition.").append("<br/>").append("<br/>")
-          						.append("L’équipe Unikbase").append("<br/>")
+								.append("Veuillez vérifier les informations de votre compte bancaire et de votre carte de crédit, et réessayer ultérieurement. Si le problème persiste, veuillez nous contacter pour plus d'assistance. ").append("<br/>").append("<br/>").append("<br/>")
+								.append("Nous restons à votre disposition.").append("<br/>").append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" >L’équipe Unikbase</div>").append("<br/>")          						
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France ").append("<br/>")
 								.append("Contact hello@unikbase.com").append("<br/>").toString();
 
@@ -143,6 +148,22 @@ public class StripeCheckoutCancel extends EndpointScript {
         try {
             javax.mail.Session mailSession = mailerSessionFactory.getSession();
             MimeMessage emailMessage = new MimeMessage(mailSession);
+            MimeMultipart content = new MimeMultipart("related");
+          
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setText(new StringBuilder("<body><strong>")
+                             .append(message_en).append("</strong>").toString(), "US-ASCII", "html");
+          
+          	textPart.setContent(textPart, "text/html");
+            content.addBodyPart(textPart);          
+            MimeBodyPart messageBodyPart = new MimeBodyPart();
+         	DataSource fds = new FileDataSource("image");
+          
+         	messageBodyPart.setDataHandler(new DataHandler(fds));
+          	messageBodyPart.setDisposition(MimeBodyPart.INLINE);
+          	content.addBodyPart(messageBodyPart);            
+            emailMessage.setContent(content);
+          
             emailMessage.setFrom(new InternetAddress("hello@unikbase.com"));
             emailMessage.addRecipient(RecipientType.TO, new InternetAddress(emailAddressTo));
             emailMessage.setSubject(isFrench ? subject_fr : subject_en);
