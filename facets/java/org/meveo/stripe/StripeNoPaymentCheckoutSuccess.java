@@ -62,16 +62,16 @@ public class StripeNoPaymentCheckoutSuccess extends EndpointScript {
         String subject_fr = "Votre paiement auprès d’Unikbase a été effectué avec succès";
       
         String message_en = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
-          						.append("Congratulations! Your payment has been successfully completed. Thank you for your trust and your purchase.").append("<br/>")
-          						.append("Your order has been received and will be processed as soon as possible. You will receive a confirmation email when your digital duplicate is ready.").append("<br/>")
+          						.append("Congratulations! Your payment has been successfully completed. Thank you for your trust and your purchase.").append("<br/>").append("<br/>")
+          						.append("Your order has been received and will be processed as soon as possible. You will receive a confirmation email when your digital duplicate is ready.").append("<br/>").append("<br/>")
 								.append("In the meantime, we invite you to download the Unikbase application on your phone which will be used to store your digital duplicate.").append("<br/>").append("<br/>").append("<br/>")
 								.append("We are at your disposal,").append("<br/>").append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" >The Unikbase team</div>")
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France") .append("<br/>")          
 								.append("Contact hello@unikbase.com").toString();
       
 		String message_fr = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
-          						.append("Félicitations ! Votre paiement a été effectué avec succès. Nous vous remercions de votre confiance et de votre achat.").append("<br/>")
-          						.append("Votre commande a été reçue et sera traitée dans les plus brefs délais. Vous recevrez un email de confirmation lorsque votre double numérique sera prêt.").append("<br/>")
+          						.append("Félicitations ! Votre paiement a été effectué avec succès. Nous vous remercions de votre confiance et de votre achat.").append("<br/>").append("<br/>")
+          						.append("Votre commande a été reçue et sera traitée dans les plus brefs délais. Vous recevrez un email de confirmation lorsque votre double numérique sera prêt.").append("<br/>").append("<br/>")
 								.append("D’ici là nous vous invitons dès à présent à télécharger sur votre téléphone l’application Unikbase qui servira à stocker votre double numérique. ").append("<br/>").append("<br/>").append("<br/>")
 								.append("Nous restons à votre disposition,").append("<br/>")
           						.append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" > L’équipe Unikbase</div>")

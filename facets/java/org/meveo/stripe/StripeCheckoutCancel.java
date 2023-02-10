@@ -125,16 +125,16 @@ public class StripeCheckoutCancel extends EndpointScript {
         String subject_fr = "Votre paiement auprès d’Unikbase a été refusé ou annulé";
       
         String message_en = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
-          						.append("We are sorry, but your payment has been refused or cancelled.").append("<br/>")
-          						.append("There may have been a problem with the payment information you provided, or your bank account may not have authorized the transaction.").append("<br/>")
+          						.append("We are sorry, but your payment has been refused or cancelled.").append("<br/>").append("<br/>")
+          						.append("There may have been a problem with the payment information you provided, or your bank account may not have authorized the transaction.").append("<br/>").append("<br/>")
 								.append("Please check your bank account and credit card information and try again later. If the problem persists, please contact us for further assistance.").append("<br/>").append("<br/>").append("<br/>")
 								.append("We will be happy to assist you.").append("<br/>").append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" >The Unikbase team</div>").append("<br/>")          						
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France") .append("<br/>")          
 								.append("Contact hello@unikbase.com").toString();
       
 		String message_fr = new StringBuilder("<div><img width=\"180px\" src=\"https://unikbase.com/assets/images/logo-u.png\" ></div>").append("<br/>")
-          						.append("Nous sommes désolés, mais votre paiement a été refusé ou annulé.").append("<br/>")
-          						.append("Il se peut qu'il y ait eu un problème avec les informations de paiement que vous avez fournies, ou que votre compte bancaire n'ait pas autorisé la transaction.").append("<br/>")
+          						.append("Nous sommes désolés, mais votre paiement a été refusé ou annulé.").append("<br/>").append("<br/>")
+          						.append("Il se peut qu'il y ait eu un problème avec les informations de paiement que vous avez fournies, ou que votre compte bancaire n'ait pas autorisé la transaction.").append("<br/>").append("<br/>")
 								.append("Veuillez vérifier les informations de votre compte bancaire et de votre carte de crédit, et réessayer ultérieurement. Si le problème persiste, veuillez nous contacter pour plus d'assistance. ").append("<br/>").append("<br/>").append("<br/>")
 								.append("Nous restons à votre disposition.").append("<br/>").append("<div><img width=\"30px\" src=\"https://unikbase.com/assets/images/logo-oU.png\" >L’équipe Unikbase</div>").append("<br/>")          						
           						.append("+ Unikbase, 320 rue Saint-Honoré 75001 Paris, France ").append("<br/>")
