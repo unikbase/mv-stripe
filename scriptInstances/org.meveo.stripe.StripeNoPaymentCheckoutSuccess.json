@@ -8,9 +8,6 @@
   "outputs" : [ {
     "name" : "result",
     "type" : "String"
-  }, {
-    "name" : "intendedLocales",
-    "type" : "List"
   } ],
   "generateOutputs" : false,
   "type" : "JAVA",
@@ -18,5 +15,5 @@
   "executionRoles" : [ ],
   "sourcingRoles" : [ ],
   "mavenDependencies" : [ ],
-  "importScriptInstances" : [ ]
+  "importScriptInstances" : [ "org.meveo.email.service.EmailService" ]
 }

@@ -20,5 +20,5 @@
     "version" : "22.3.0",
     "coordinates" : "com.stripe:stripe-java:22.3.0"
   } ],
-  "importScriptInstances" : [ ]
+  "importScriptInstances" : [ "org.meveo.credentials.CredentialHelperService" ]
 }

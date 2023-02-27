@@ -4,6 +4,11 @@
   "license" : "GPL",
   "currentVersion" : "0.1",
   "isInDraft" : true,
-  "moduleDependencies" : [ ],
+  "autoCommit" : false,
+  "moduleDependencies" : [ {
+    "code" : "mv-email",
+    "description" : "Email",
+    "currentVersion" : "0.1"
+  } ],
   "moduleFiles" : [ ]
 }

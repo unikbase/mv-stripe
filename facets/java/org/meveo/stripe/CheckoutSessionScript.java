@@ -14,9 +14,6 @@ import org.meveo.api.persistence.CrossStorageApi;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.meveo.service.admin.impl.credentials.CredentialHelperService;
-import org.meveo.model.admin.MvCredential;
-
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -24,40 +21,60 @@ import com.stripe.exception.StripeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.meveo.model.customEntities.StrCheckoutInfo;
+import org.meveo.model.customEntities.Credential;
+import org.meveo.credentials.CredentialHelperService;
 
 import org.meveo.api.rest.technicalservice.EndpointScript;
 
 public class CheckoutSessionScript extends EndpointScript {
 
-	@Inject
-	private CrossStorageApi crossStorageApi;
+	private CrossStorageApi crossStorageApi = getCDIBean(CrossStorageApi.class);
 
-	@Inject
-	private RepositoryService repositoryService;
-
-	@Inject
-	private CredentialHelperService credentialHelperService;
-
+	private RepositoryService repositoryService = getCDIBean(RepositoryService.class);
 	private static final Logger Log = LoggerFactory.getLogger(CheckoutSessionScript.class);
-    public static final String SUCCESS_URL = "https://unikbase-infra.github.io/env-onboarding-dev/#/success";
-    public static final String CANCEL_URL = "https://unikbase-infra.github.io/env-onboarding-dev/#/cancel";
-    public static Map<String, String> priceMap;
-    
-    static {
-        priceMap = new HashMap<>();
-        priceMap.put("0", "0");
-        priceMap.put("1", "price_1MWOHoJQmmmLLXjqRUnYQ69J");
-        priceMap.put("2", "price_1MU8ueJQmmmLLXjqGx5Qjblb");
-        priceMap.put("3", "price_1MWOILJQmmmLLXjqLjuLjV9y");
-        priceMap.put("4", "price_1MWOHoJQmmmLLXjqRUnYQ69J");
-        priceMap.put("5", "price_1MWOIgJQmmmLLXjqT9epLq7d");
+    private final Repository defaultRepo = repositoryService.findDefaultRepository();
+  
+    public static final String STRIPE_DOMAIN = "stripe.com";    
+    public static final String ENV_ACCOUNT_TYPE_DEV = "ENV_ACCOUNT_TYPE_DEV";
+    public static final String ENV_ACCOUNT_TYPE_PREPROD = "ENV_ACCOUNT_TYPE_PREPROD";
+    public static final String ENV_ACCOUNT_TYPE_LIVE = "ENV_ACCOUNT_TYPE_LIVE";
+    public static final String DEV_SUCCESS = "DEV_SUCCESS";
+    public static final String DEV_FAILURE = "DEV_FAILURE";
+    public static final String LIVE_SUCCESS = "LIVE_SUCCESS";
+    public static final String LIVE_FAILURE = "LIVE_FAILURE";
+    public static final String PREPROD_SUCCESS = "PREPROD_SUCCESS";
+    public static final String PREPROD_FAILURE = "PREPROD_FAILURE";
+    public static final String DEV_STRIPE_ACCOUNT_EMAIL = "farhan.munir@qavitech.com";
+    public static final String PREPROD_STRIPE_ACCOUNT_EMAIL = "farhan.munir@gmail.com";
+    public static final String LIVE_STRIPE_ACCOUNT_EMAIL = "smichea@manaty.net";
+
+    public static Map<String, Map<String, String>> ALL_PRICE_MAPS;    
+    private static Map<String, String> SUCCESS_FAILURE_URLS;
+  
+    public static Map<String, String> PRICE_MAP;
+    public static final String SUCCESS_URL;
+    public static final String CANCEL_URL;
+    public static String STRIPE_CHECKOUT_API_KEY;
+  
+    static{
+      
+        ALL_PRICE_MAPS = CheckoutSessionScript.getInitializedMap();
+        SUCCESS_FAILURE_URLS = CheckoutSessionScript.initializeURLs();
+      
+        // Need to change parameters in all three lines according to the environement for now.
+        PRICE_MAP = ALL_PRICE_MAPS.get(ENV_ACCOUNT_TYPE_DEV);
+        SUCCESS_URL = SUCCESS_FAILURE_URLS.get(DEV_SUCCESS);
+        CANCEL_URL = SUCCESS_FAILURE_URLS.get(DEV_FAILURE);
+        
     }
+  
+   
 	private String responseUrl="";
 
 	public String getResponseUrl() {
 		return responseUrl;
 	}
-
+  
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		Log.info("received {}", parameters);
@@ -65,19 +82,12 @@ public class CheckoutSessionScript extends EndpointScript {
 		StrCheckoutInfo checkoutInfo = new StrCheckoutInfo();
 		checkoutInfo.setCreationDate(Instant.now());
 
-		// as long as we have an email we process the payment
-		/*if (parameters.containsKey("email")) {
-			checkoutInfo.setEmail(parameters.get("email").toString());
-		} else {
-			endpointResponse.setStatus(400);
-			endpointResponse.setErrorMessage("missing email");
-		}*/
       
         if (parameters.containsKey("price_id")) {
 			priceId = parameters.get("price_id").toString();
-            if(priceMap.get(priceId) == null){
+            if(PRICE_MAP.get(priceId) == null){
                 throw new BusinessException("No Price is defined against price_id provided");
-            }else if("0".equals(priceMap.get(priceId))){
+            }else if("0".equals(PRICE_MAP.get(priceId))){
                 if(parameters.get("email") == null){
                     endpointResponse.setStatus(400);
 			        endpointResponse.setErrorMessage("missing email, if provided we can send email");
@@ -118,21 +128,11 @@ public class CheckoutSessionScript extends EndpointScript {
 		}
 
 		// retrieve apiKey from credential
-		MvCredential credential =
-		credentialHelperService.getCredential("stripe.com");
-		if(credential==null){
-			Log.error("stripe.com credential not found, hardcoding secret api keys");
-			//throw new BusinessException("technical error");
-            Stripe.apiKey = "sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3";
-		}else{
-            Log.info("========================================================================================");
-            Log.info("credential.getApiKey()="+credential.getApiKey());
-            Log.info("Api key should be     =sk_test_51MTznEJQmmmLLXjqamKcb0YpB09K432YXD4lSumZIi2vXOaDqW0pditpdN7ifHHAhxNj2a647vWcwYA5rhrNG8Na00BsAHuNF3");
-            Stripe.apiKey = credential.getApiKey();
-        }
-        
-
-		try {
+		Credential credential = CredentialHelperService.getCredential(STRIPE_DOMAIN, crossStorageApi, defaultRepo);
+        STRIPE_CHECKOUT_API_KEY = (credential == null ? "": credential.getApiKey());
+        Stripe.apiKey = STRIPE_CHECKOUT_API_KEY;
+      
+        try {
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
 					.setSuccessUrl(SUCCESS_URL)
@@ -144,11 +144,11 @@ public class CheckoutSessionScript extends EndpointScript {
 					.addLineItem(
 							SessionCreateParams.LineItem.builder()
 									.setQuantity(1L)
-									.setPrice(priceMap.get(priceId))
+									.setPrice(PRICE_MAP.get(priceId))
 									.build())
                     .putMetadata("checkoutInfoId",uuid) 
                     //.putMetadata("customerEmail",checkoutInfo.getEmail())
-                    .putMetadata("price",priceMap.get(priceId))
+                    .putMetadata("price",PRICE_MAP.get(priceId))
                     .putMetadata("tpkId",inputInfo.get("tpk_id"))
 					.build();
 			Session session = Session.create(params);
@@ -160,5 +160,49 @@ public class CheckoutSessionScript extends EndpointScript {
 			Log.error("Stripe error", ex);
 		}
 	}
+  
+    static Map<String, Map<String, String>> getInitializedMap(){
+        Map<String, Map<String, String>> envPriceMap = new HashMap<>();
+        
+        Map<String, String> priceMap = new HashMap();
+        priceMap.put("0", "0");
+        priceMap.put("1", "price_1MWOHoJQmmmLLXjqRUnYQ69J");
+        priceMap.put("2", "price_1MU8ueJQmmmLLXjqGx5Qjblb");
+        priceMap.put("3", "price_1MWOILJQmmmLLXjqLjuLjV9y");
+        priceMap.put("4", "price_1MWOHoJQmmmLLXjqRUnYQ69J");
+        priceMap.put("5", "price_1MWOIgJQmmmLLXjqT9epLq7d");
+        envPriceMap.put(ENV_ACCOUNT_TYPE_DEV, priceMap);
+      
+        priceMap = new HashMap();
+        priceMap.put("0", "0");
+        priceMap.put("1", "price_1MWQMaLksAz2eKAnTa6RbDHz");
+        priceMap.put("2", "price_1MVw9gLksAz2eKAnfEpX4oKv");
+        priceMap.put("3", "price_1MWQMpLksAz2eKAnWZf30tXY");
+        priceMap.put("4", "price_1MWQMaLksAz2eKAnTa6RbDHz");
+        priceMap.put("5", "price_1MWQN0LksAz2eKAnfes7S1vf");
+        envPriceMap.put(ENV_ACCOUNT_TYPE_PREPROD, priceMap);
+      
+        priceMap = new HashMap();
+        priceMap.put("0", "0");
+        priceMap.put("1", "price_1MWFI4F8O6FLWQWJHPlngM0j");
+        priceMap.put("2", "price_1MLlXiF8O6FLWQWJOyOaXTY7");
+        priceMap.put("3", "price_1MWFIPF8O6FLWQWJ6yG5an6E");
+        priceMap.put("4", "price_1MWFI4F8O6FLWQWJHPlngM0j");
+        priceMap.put("5", "price_1MWFIjF8O6FLWQWJFmvNU0b9");
+        envPriceMap.put(ENV_ACCOUNT_TYPE_LIVE, priceMap);
+        
+        return envPriceMap;
+    }
+  
+    static Map<String, String> initializeURLs(){
+      Map<String, String> urls = new HashMap();
+      urls.put("DEV_SUCCESS", "https://unikbase-infra.github.io/env-onboarding-dev/#/success");
+      urls.put("DEV_FAILURE", "https://unikbase-infra.github.io/env-onboarding-dev/#/cancel");
+      urls.put("PREPROD_SUCCESS", "https://unikbase-infra.github.io/env-onboarding-dev/#/success");
+      urls.put("PREPROD_FAILURE", "https://unikbase-infra.github.io/env-onboarding-dev/#/cancel");
+      urls.put("LIVE_SUCCESS", "http://onboarding.unikbase.com/#/success");
+      urls.put("LIVE_FAILURE", "http://onboarding.unikbase.com/#/cancel");
+      return urls;
+    }
 
 }

@@ -11,5 +11,5 @@
   "executionRoles" : [ ],
   "sourcingRoles" : [ ],
   "mavenDependencies" : [ ],
-  "importScriptInstances" : [ ]
+  "importScriptInstances" : [ "org.meveo.credentials.CredentialHelperService", "org.meveo.email.service.EmailService" ]
 }
