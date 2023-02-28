@@ -41,13 +41,13 @@ public class StripeCheckoutSuccess extends EndpointScript {
 		super.execute(parameters);
               
 		// retrieve apiKey from credential
-        if(CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY == null || CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY.trim().length() == 0 ){
+        /*if(CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY == null || CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY.trim().length() == 0 ){
           Credential credential = CredentialHelperService.getCredential(CheckoutSessionScript.STRIPE_DOMAIN, crossStorageApi, repositoryService.findDefaultRepository());
           CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY = (credential == null ? "": credential.getApiKey());
           Stripe.apiKey = CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY;
           if(credential == null)
             throw new BusinessException("no api keys found against stripe.com domain");
-        }
+        }*/
 		
         
         
