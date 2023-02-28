@@ -13,15 +13,10 @@ import org.meveo.email.service.EmailService;
 public class StripeNoPaymentCheckoutSuccess extends Script {
 	
     private static final Logger Log = LoggerFactory.getLogger(StripeNoPaymentCheckoutSuccess.class);
-    private static final String SUCCESS = "Nous vous remercions de votre commande! Si vous avez des questions, contactez nous par email: orders@unikbase.com";
     private String customerEmail = null;
       
-    private String result="";
+    private String result;
 
-	public String getResult() {
-		return result;
-	}
-  
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		super.execute(parameters);
@@ -34,33 +29,24 @@ public class StripeNoPaymentCheckoutSuccess extends Script {
             this.sendSuccessEmail(customerEmail);
         }
       
+      	result = "SUCCESS";
 	}
   
-  
-    private void sendSuccessEmail(String emailAddressTo) throws BusinessException{        
-      
+    private void sendSuccessEmail(String emailAddressTo) throws BusinessException{
         Map<String, Object> mapping = new HashMap<>();
       	mapping.put("emailType", "FREE_ORDER");
       	mapping.put("emailAddressTo", emailAddressTo);
-      	mapping.put("mapping", new HashMap<String, String>());
+      	mapping.put("mapping", Collections.emptyMap());
       
-        Script emailService = new EmailService();
-        if(emailService == null){
-            Log.info("Email Srevice is not initialized");
-            result = "Failed";
-        }else{
-            emailService.execute(mapping);
-            result = SUCCESS;
-        }
-        Log.info("result: {}", result);
+        Script emailService = new EmailService();  
+        emailService.execute(mapping);
     }
   
     public void setCustomerEmail(String customerEmail){
         this.customerEmail = customerEmail;
     }
   
-    
-	
+  	public String getResult() {
+		return result;
+	}	
 }
-
- 
