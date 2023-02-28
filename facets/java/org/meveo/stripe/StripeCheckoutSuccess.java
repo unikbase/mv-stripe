@@ -39,6 +39,7 @@ public class StripeCheckoutSuccess extends EndpointScript {
 	@Override
 	public void execute(Map<String, Object> parameters) throws BusinessException {
 		super.execute(parameters);
+        String result = null;        
               
 		// retrieve apiKey from credential
         /*if(CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY == null || CheckoutSessionScript.STRIPE_CHECKOUT_API_KEY.trim().length() == 0 ){
@@ -81,9 +82,11 @@ public class StripeCheckoutSuccess extends EndpointScript {
                 StrCheckoutInfo checkoutInfo = crossStorageApi.find(defaultRepo, checkoutInfoId, StrCheckoutInfo.class);
                 checkoutInfo.setResponseCode("200");
                 checkoutInfo.setResponse(session.toString());
-                crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);            
+                crossStorageApi.createOrUpdate(defaultRepo, checkoutInfo);                 	
+        		Log.info("result: {}", SUCCESS);
                 Log.info("checkoutInfo instance {} updated", checkoutInfoId);
-            } catch (Exception ex) {
+            } catch (Exception ex) {                
+        		Log.info("result: Failure", result);
                 throw new BusinessException(ex);
             }
         }else{
@@ -98,23 +101,13 @@ public class StripeCheckoutSuccess extends EndpointScript {
   
   
     private void sendSuccessEmail(String emailAddressTo) throws BusinessException{
-        String result = null;
-        
         Map<String, Object> mapping = new HashMap<>();
       	mapping.put("emailType", "ONBOARDING_SUCCESS_TPK");
       	mapping.put("emailAddressTo", emailAddressTo);
-      	mapping.put("mapping", new HashMap<String, String>());
-      
+      	mapping.put("mapping", Collections.emptyMap());      
       	Script emailService = new EmailService();
-        if(emailService == null){
-            Log.info("Email Srevice is not initialized");
-            result = "Failed";
-        }else{
-            emailService.execute(mapping);
-            result = SUCCESS;
-        }
-      
-        Log.info("result: {}", result);
+        emailService.execute(mapping);
+        
     }
 
 }

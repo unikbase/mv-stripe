@@ -8,7 +8,9 @@
   "moduleDependencies" : [ {
     "code" : "mv-email",
     "description" : "Email",
-    "currentVersion" : "0.1"
+    "currentVersion" : "0.1",
+    "gitUrl" : "https://github.com/unikbase/mv-email.git",
+    "gitBranch" : "master"
   } ],
   "moduleFiles" : [ ]
 }

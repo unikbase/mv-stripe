@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Collections;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,25 +116,17 @@ public class StripeCheckoutCancel extends EndpointScript {
         if(customerEmail != null && sendEmail){            		
             this.sendFailureEmail(customerEmail);
         }
+        Log.info("Stripe checkout payment cancel/failure with checkoutInfo: {} updated result: SUCCESS", checkoutInfoId);
 	}
   
     private void sendFailureEmail(String emailAddressTo) throws BusinessException{
-        String result = null;
-        
         Map<String, Object> mapping = new HashMap<>();
       	mapping.put("emailType", "ONBOARDING_FAIL_TPK");
       	mapping.put("emailAddressTo", emailAddressTo);
-      	mapping.put("mapping", new HashMap<String, String>());
+      	mapping.put("mapping", Collections.emptyMap());
       
         Script emailService = new EmailService();
-        if(emailService == null){
-            Log.info("Email Srevice is not initialized");
-            result = "Failed";
-        }else{
-            emailService.execute(mapping);
-            result = SUCCESS;
-        }
-        Log.info("result: {}", result);
+        emailService.execute(mapping);
     }
 
 
