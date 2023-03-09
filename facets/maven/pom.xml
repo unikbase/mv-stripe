@@ -14,7 +14,7 @@
       <dependency>
         <groupId>org.meveo</groupId>
         <artifactId>meveo</artifactId>
-        <version>7.1.2</version>
+        <version>7.2.0-SNAPSHOT</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.meveo</groupId>
       <artifactId>meveo-api</artifactId>
-      <version>7.1.2</version>
+      <version>7.2.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -53,6 +53,12 @@
       <artifactId>stripe-java</artifactId>
       <version>22.3.0</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.meveo</groupId>
+      <artifactId>mv-email</artifactId>
+      <version>0.1</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <repositories>

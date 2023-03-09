@@ -10,6 +10,11 @@
     "multivalued" : false,
     "parameterName" : "customerEmail",
     "valueRequired" : false
+  }, {
+    "serviceParameter" : "tpkId",
+    "multivalued" : false,
+    "parameterName" : "tpkId",
+    "valueRequired" : false
   } ],
   "pathParameters" : [ ],
   "roles" : [ ],

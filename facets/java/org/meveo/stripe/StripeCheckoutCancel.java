@@ -123,7 +123,7 @@ public class StripeCheckoutCancel extends EndpointScript {
         Map<String, Object> mapping = new HashMap<>();
       	mapping.put("emailType", "ONBOARDING_FAIL_TPK");
       	mapping.put("emailAddressTo", emailAddressTo);
-      	mapping.put("mapping", Collections.emptyMap());
+      	mapping.put("mapping", new HashMap());
       
         Script emailService = new EmailService();
         emailService.execute(mapping);

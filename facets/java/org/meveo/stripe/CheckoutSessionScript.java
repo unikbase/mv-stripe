@@ -62,9 +62,9 @@ public class CheckoutSessionScript extends EndpointScript {
         SUCCESS_FAILURE_URLS = CheckoutSessionScript.initializeURLs();
       
         // Need to change parameters in all three lines according to the environement for now.
-        PRICE_MAP = ALL_PRICE_MAPS.get(ENV_ACCOUNT_TYPE_DEV);
-        SUCCESS_URL = SUCCESS_FAILURE_URLS.get(DEV_SUCCESS);
-        CANCEL_URL = SUCCESS_FAILURE_URLS.get(DEV_FAILURE);
+        PRICE_MAP = ALL_PRICE_MAPS.get(ENV_ACCOUNT_TYPE_LIVE);
+        SUCCESS_URL = SUCCESS_FAILURE_URLS.get(LIVE_SUCCESS);
+        CANCEL_URL = SUCCESS_FAILURE_URLS.get(LIVE_FAILURE);
         
     }
   
@@ -83,6 +83,10 @@ public class CheckoutSessionScript extends EndpointScript {
 		checkoutInfo.setCreationDate(Instant.now());
 
       
+        Map<String, String> inputInfo = new HashMap<>();
+		if (parameters.containsKey("tpk_id")) {
+			inputInfo.put("tpk_id", parameters.get("tpk_id").toString());
+		}
         if (parameters.containsKey("price_id")) {
 			priceId = parameters.get("price_id").toString();
             if(PRICE_MAP.get(priceId) == null){
@@ -92,16 +96,13 @@ public class CheckoutSessionScript extends EndpointScript {
                     endpointResponse.setStatus(400);
 			        endpointResponse.setErrorMessage("missing email, if provided we can send email");
                 }else{
-                    responseUrl = this.endpointRequest.getRequestURL().toString().substring(0,this.endpointRequest.getRequestURL().toString().indexOf("/rest/"))+"/rest/stripeNoPaymentCheckoutSuccess?customerEmail="+parameters.get("email").toString();
+                    responseUrl = this.endpointRequest.getRequestURL().toString().substring(0,this.endpointRequest.getRequestURL().toString().indexOf("/rest/"))+"/rest/stripeNoPaymentCheckoutSuccess?customerEmail="
+                      					+parameters.get("email").toString()+"&tpkId="+inputInfo.get("tpk_id").toString();
                 }                
                 return;
             }
 		}
-      
-		Map<String, String> inputInfo = new HashMap<>();
-		if (parameters.containsKey("tpk_id")) {
-			inputInfo.put("tpk_id", parameters.get("tpk_id").toString());
-		}
+		
 		if (parameters.containsKey("value")) {
 			inputInfo.put("value", parameters.get("value").toString());
 		}
@@ -131,7 +132,8 @@ public class CheckoutSessionScript extends EndpointScript {
 		Credential credential = CredentialHelperService.getCredential(STRIPE_DOMAIN, crossStorageApi, defaultRepo);
         STRIPE_CHECKOUT_API_KEY = (credential == null ? "": credential.getApiKey());
         Stripe.apiKey = STRIPE_CHECKOUT_API_KEY;
-      
+        Log.info("stripe api key = "+STRIPE_CHECKOUT_API_KEY);
+        Log.info("price tag = "+PRICE_MAP.get(priceId));
         try {
 			SessionCreateParams params = SessionCreateParams.builder()
 					.setMode(SessionCreateParams.Mode.PAYMENT)
@@ -150,6 +152,7 @@ public class CheckoutSessionScript extends EndpointScript {
                     //.putMetadata("customerEmail",checkoutInfo.getEmail())
                     .putMetadata("price",PRICE_MAP.get(priceId))
                     .putMetadata("tpkId",inputInfo.get("tpk_id"))
+                    .putMetadata("inputPriceId",priceId)
 					.build();
 			Session session = Session.create(params);
           
@@ -185,7 +188,7 @@ public class CheckoutSessionScript extends EndpointScript {
         priceMap = new HashMap();
         priceMap.put("0", "0");
         priceMap.put("1", "price_1MWFI4F8O6FLWQWJHPlngM0j");
-        priceMap.put("2", "price_1MLlXiF8O6FLWQWJOyOaXTY7");
+        priceMap.put("2", "price_1MXMuPF8O6FLWQWJq9DBrPbM");
         priceMap.put("3", "price_1MWFIPF8O6FLWQWJ6yG5an6E");
         priceMap.put("4", "price_1MWFI4F8O6FLWQWJHPlngM0j");
         priceMap.put("5", "price_1MWFIjF8O6FLWQWJFmvNU0b9");

@@ -15,6 +15,12 @@ const requestSchema = {
       "id" : "stripeNoPaymentCheckoutSuccess_customerEmail",
       "type" : "string",
       "minLength" : 1
+    },
+    "tpkId" : {
+      "title" : "tpkId",
+      "id" : "stripeNoPaymentCheckoutSuccess_tpkId",
+      "type" : "string",
+      "minLength" : 1
     }
   }
 }

@@ -2,6 +2,7 @@ package org.meveo.stripe;
 
 
 import java.util.*;
+import java.text.SimpleDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import org.meveo.service.storage.RepositoryService;
 import org.meveo.api.persistence.CrossStorageApi;
 import org.meveo.model.customEntities.StrCheckoutInfo;
 import org.meveo.email.service.EmailService;
+import org.meveo.googlesheet.service.GoogleSheetViaFormService;
 
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
@@ -61,10 +63,17 @@ public class StripeCheckoutSuccess extends EndpointScript {
         Session session = null;
         String checkoutInfoId = null;
         String customerEmail = null;
+        Long tpkId = null; 
+        String threeDScan = null;
+        String inputPriceId = null;
+      
         try{
             session = Session.retrieve( sessionId.trim() );
             checkoutInfoId = session.getMetadata().get("checkoutInfoId");
             customerEmail = session.getCustomerDetails().getEmail();
+            tpkId = Long.valueOf(session.getMetadata().get("tpkId"));
+            inputPriceId = session.getMetadata().get("inputPriceId");          
+            threeDScan = String.valueOf(Arrays.asList("1","3","5").contains(inputPriceId)); 
         }catch(StripeException ex)  {
             Log.error(ex.getMessage());
             throw new BusinessException( ex);
@@ -74,6 +83,8 @@ public class StripeCheckoutSuccess extends EndpointScript {
         Log.info("customerEmail="+customerEmail);
         Log.info("Payment Status ="+session.getPaymentStatus());
         Log.info("Status ="+session.getStatus());
+        Log.info("is3DScan ="+ threeDScan);
+        Log.info("tpkId ="+ tpkId);
         Log.info("===============================================================");
         
         if(checkoutInfoId != null && checkoutInfoId.length() > 0){
@@ -104,10 +115,24 @@ public class StripeCheckoutSuccess extends EndpointScript {
         Map<String, Object> mapping = new HashMap<>();
       	mapping.put("emailType", "ONBOARDING_SUCCESS_TPK");
       	mapping.put("emailAddressTo", emailAddressTo);
-      	mapping.put("mapping", Collections.emptyMap());      
+      	mapping.put("mapping", new HashMap());      
       	Script emailService = new EmailService();
         emailService.execute(mapping);
         
+    }
+  
+    private void writeToSheet(String customerEmail, String threeDScan, Long orderId){
+        GoogleSheetViaFormService googleSheetService = new GoogleSheetViaFormService();
+        try {         	
+          	googleSheetService.setOrderId(orderId);
+          	googleSheetService.setThreeDScan(threeDScan);
+          	googleSheetService.setEmail(customerEmail);
+            googleSheetService.setStatus("A traiter TPK");            
+            googleSheetService.setDateCreationTPK(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+          	googleSheetService.execute(null);
+        } catch(Exception ex) {
+            Log.error(googleSheetService.toString());
+        }
     }
 
 }

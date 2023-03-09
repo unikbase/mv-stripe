@@ -4,6 +4,9 @@
   "inputs" : [ {
     "name" : "customerEmail",
     "type" : "String"
+  }, {
+    "name" : "tpkId",
+    "type" : "String"
   } ],
   "outputs" : [ {
     "name" : "result",
@@ -15,5 +18,5 @@
   "executionRoles" : [ ],
   "sourcingRoles" : [ ],
   "mavenDependencies" : [ ],
-  "importScriptInstances" : [ "org.meveo.email.service.EmailService" ]
+  "importScriptInstances" : [ "org.meveo.googlesheet.service.GoogleSheetViaFormService", "org.meveo.email.service.EmailService" ]
 }
