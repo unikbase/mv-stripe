@@ -62,9 +62,9 @@ public class CheckoutSessionScript extends EndpointScript {
         SUCCESS_FAILURE_URLS = CheckoutSessionScript.initializeURLs();
       
         // Need to change parameters in all three lines according to the environement for now.
-        PRICE_MAP = ALL_PRICE_MAPS.get(ENV_ACCOUNT_TYPE_LIVE);
-        SUCCESS_URL = SUCCESS_FAILURE_URLS.get(LIVE_SUCCESS);
-        CANCEL_URL = SUCCESS_FAILURE_URLS.get(LIVE_FAILURE);
+        PRICE_MAP = ALL_PRICE_MAPS.get(ENV_ACCOUNT_TYPE_DEV);
+        SUCCESS_URL = SUCCESS_FAILURE_URLS.get(DEV_SUCCESS);
+        CANCEL_URL = SUCCESS_FAILURE_URLS.get(DEV_FAILURE);
         
     }
   
